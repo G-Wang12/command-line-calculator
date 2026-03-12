@@ -1,2 +1,2 @@
-# c--command-line-calculator
+# command-line-calculator
 to prove i know c++ 😈
