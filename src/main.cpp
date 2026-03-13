@@ -10,7 +10,7 @@ using namespace std;
 
 namespace
 {
-
+    // Remove leading/trailing whitespace from a line (used by the REPL).
     string trim(string s)
     {
         auto not_space = [](unsigned char ch)
@@ -24,6 +24,7 @@ namespace
         return string(begin_it, rbegin_it.base());
     }
 
+    // Print CLI usage help.
     void print_usage(const char *argv0)
     {
         const char *prog = (argv0 != nullptr && argv0[0] != '\0') ? argv0 : "toy-app";
@@ -33,6 +34,7 @@ namespace
              << "  " << prog << " --help\n";
     }
 
+    // Evaluate a single expression and print the result (or an error message).
     int run_once(string_view expr)
     {
         try
@@ -48,6 +50,8 @@ namespace
         }
     }
 
+    // Interactive calculator loop.
+    // Reads one expression per line until EOF or user enters "quit"/"exit".
     int run_repl()
     {
         cout << "Live calculator. Type an expression and press Enter.\n"
@@ -81,6 +85,9 @@ namespace
 
 } // namespace
 
+// Entry point:
+// - No args: start REPL
+// - One arg: evaluate expression, or handle --help/--interactive
 int main(int argc, char **argv)
 {
     if (argc == 1)

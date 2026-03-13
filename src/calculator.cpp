@@ -18,7 +18,8 @@ using namespace std;
 
 namespace
 {
-
+    // Implementation details for the expression evaluator.
+    // Token kinds produced by the tokenizer and consumed by the parser/evaluator.
     enum class TokenKind
     {
         Number,
@@ -31,12 +32,14 @@ namespace
         UnaryMinus,
     };
 
+    // A single token in the expression.
     struct Token
     {
         TokenKind kind;
         double value = 0.0; // Used only when kind == TokenKind::Number.
     };
 
+    // Returns true if the token kind is an operator (unary or binary).
     bool is_operator(TokenKind kind)
     {
         switch (kind)
@@ -52,6 +55,7 @@ namespace
         }
     }
 
+    // Operator precedence (higher binds tighter).
     int precedence(TokenKind kind)
     {
         switch (kind)
@@ -69,21 +73,26 @@ namespace
         }
     }
 
+    // Unary minus is right-associative (treats "--1" as -( -1 )).
     bool is_right_associative(TokenKind kind)
     {
         return kind == TokenKind::UnaryMinus;
     }
 
+    // Helper to throw parse errors consistently.
     [[noreturn]] void parse_error(string msg)
     {
         throw runtime_error(std::move(msg));
     }
 
+    // Convert raw input characters into a sequence of tokens.
+    // Handles unary minus by emitting TokenKind::UnaryMinus where appropriate.
     vector<Token> tokenize(string_view input)
     {
         vector<Token> tokens;
         size_t i = 0;
 
+        // Peek the previous emitted token kind (used to decide unary vs binary '-').
         auto peek_prev_kind = [&]() -> optional<TokenKind>
         {
             if (tokens.empty())
@@ -175,6 +184,8 @@ namespace
         return tokens;
     }
 
+    // Convert tokens from infix form to Reverse Polish Notation (postfix).
+    // Uses the shunting-yard algorithm to enforce precedence and parentheses.
     vector<Token> to_rpn(const vector<Token> &tokens)
     {
         vector<Token> output;
@@ -257,6 +268,7 @@ namespace
         return output;
     }
 
+    // Evaluate an RPN (postfix) token stream using a simple value stack.
     double eval_rpn(const vector<Token> &rpn)
     {
         vector<double> st;
@@ -334,7 +346,7 @@ namespace
 
 namespace calculator
 {
-
+    // Public entrypoint: tokenize -> parse (RPN) -> evaluate.
     double evaluate(string_view expression)
     {
         auto tokens = tokenize(expression);
@@ -342,6 +354,7 @@ namespace calculator
         return eval_rpn(rpn);
     }
 
+    // Format numbers for CLI output (avoid trailing zeros, show integers cleanly).
     string format_number(double value)
     {
         if (isnan(value))

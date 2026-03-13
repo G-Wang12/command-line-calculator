@@ -10,8 +10,11 @@ using namespace std;
 namespace
 {
 
+    // Accumulates the number of failed expectations.
     int failures = 0;
 
+    // Expect that evaluating expr returns a value close to expected.
+    // Uses a small epsilon because results are doubles.
     void expect_near(const string &expr, double expected, double eps = 1e-12)
     {
         try
@@ -30,6 +33,7 @@ namespace
         }
     }
 
+    // Expect that evaluating expr throws (any) exception.
     void expect_throws(const string &expr)
     {
         try
@@ -46,6 +50,7 @@ namespace
 
 } // namespace
 
+// Minimal test runner (no external framework): returns 0 on success, 1 on failure.
 int main()
 {
     // Basic arithmetic + precedence
