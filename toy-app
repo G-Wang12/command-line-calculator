@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Repo-root launcher.
+# - Ensures the CMake build exists (./build/toy-app)
+# - Then forwards all args to the real binary
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP="$HERE/build/toy-app"
+
+if [[ ! -x "$APP" ]]; then
+  cmake -S "$HERE" -B "$HERE/build"
+  cmake --build "$HERE/build"
+fi
+
+exec "$APP" "$@"
